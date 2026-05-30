@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="SaaSBillingSystem.API/SaaSBillingSystem.API.csproj" />
+  <Project Path="SaaSBillingSystem.Application/SaaSBillingSystem.Application.csproj" />
+  <Project Path="SaaSBillingSystem.Domain/SaaSBillingSystem.Domain.csproj" />
+  <Project Path="SaaSBillingSystem.Infrastructure/SaaSBillingSystem.Infrastructure.csproj" />
+  <Project Path="SaaSBillingSystem.Shared/SaaSBillingSystem.Shared.csproj" />
+</Solution>
