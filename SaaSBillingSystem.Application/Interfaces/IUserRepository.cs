@@ -8,6 +8,8 @@ public interface IUserRepository
 {
     Task AddAsync(User user);
     Task<User?> GetByEmailAsync(string email);
+    Task<bool> ExistsByNameAsync(string email);
     Task<User?> GetByIdAsync(Guid id);
     Task<List<User>> GetAllUsersAsync();
+    Task<List<OrganizationMembership>> GetOrganizationMembershipsAsync(Guid userid);
 }

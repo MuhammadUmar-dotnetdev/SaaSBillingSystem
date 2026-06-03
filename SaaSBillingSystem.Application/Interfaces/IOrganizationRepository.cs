@@ -7,7 +7,8 @@ namespace SaaSBillingSystem.Application.Interfaces
         Task<List<Organization>> GetAllAsync();
         Task AddAsync(Organization organization);
         Task<bool> ExistsByNameAsync(string name);
-        Task<List<User>> GetUsersOfOrganizationByName(string name);
-        Task<List<User>> GetUsersOfOrganizationById(Guid Id);
+        Task<Organization?> GetByNameAsync(string name);
+        Task<string?> GetNameByIdAsync(Guid id);
+        Task<List<Organization>> GetByIdsAsync(List<Guid> ids);
     }
 }

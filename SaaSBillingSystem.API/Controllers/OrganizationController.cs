@@ -1,13 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SaaSBillingSystem.Application.Features.Organizations.GetAllOrganizations;
-using SaaSBillingSystem.Application.Features.Organizations.GetAllUsersOfOrganizationById;
-using SaaSBillingSystem.Application.Features.Organizations.GetAllUsersOfOrganizationByName;
 
 namespace SaaSBillingSystem.API.Controllers
 {
     [ApiController]
-    [Route("api/{controller}")]
+    [Route("api/[controller]")]
     public class OrganizationController: ControllerBase
     {
         private readonly IMediator _mediator;
@@ -24,19 +22,6 @@ namespace SaaSBillingSystem.API.Controllers
         {
             var result = await _mediator.Send(new GetAllOrganizationsCommand());
             return Ok(result);
-        }
-
-        [HttpGet("users/{name}")]
-        public async Task<IActionResult> GetAllUsersOfOrganizationByName(string name)
-        {
-            var list = await _mediator.Send(new GetAllUsersOfOrganizationByNameCommand(name));
-            return Ok(list);
-        }
-        [HttpGet("users/{id:guid}")]
-        public async Task<IActionResult> GetAllUsersOfOrganizationById(Guid id)
-        {
-            var list = await _mediator.Send(new GetAllUsersOfOrganizationByIdCommand(id));
-            return Ok(list);
         }
     }
 }

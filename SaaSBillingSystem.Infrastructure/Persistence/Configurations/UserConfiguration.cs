@@ -14,10 +14,8 @@ namespace SaaSBillingSystem.Infrastructure.Persistence.Configurations
                 .IsRequired()
                 .HasMaxLength(200);
 
-            builder.HasOne(u => u.Organization)
-                .WithMany(o => o.Users)
-                .HasForeignKey(u => u.OrganizationId)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder.HasIndex(u => u.Email)
+                .IsUnique();
         }
     }
 }

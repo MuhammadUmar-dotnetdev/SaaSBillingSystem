@@ -34,4 +34,6 @@ public class ApplicationDbContext : DbContext
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
     public DbSet<Plan> Plans => Set<Plan>();
     public DbSet<Organization> Organizations => Set<Organization>();
+    public DbSet<OrganizationMembership> OrganizationMemberships => Set<OrganizationMembership>();
+    public DbSet<Invitation> Invitations => Set<Invitation>();
 }

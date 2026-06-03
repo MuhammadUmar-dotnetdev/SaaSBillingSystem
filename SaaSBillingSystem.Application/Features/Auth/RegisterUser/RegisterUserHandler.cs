@@ -38,17 +38,7 @@ public class RegisterUserHandler
             throw new Exception("User already exists");
 
         var hashedPaswword = _passwordHasher.Hash(request.Password);
-
-        var orgExists = await _organizationRepository.ExistsByNameAsync(request.OrganizationName);
-        if(orgExists)
-        {
-            //return Result<bool>.Failure("Organization Already Exists");
-            //return default!;
-            throw new Exception("Organization already exists");
-        }
-        var organization = new Organization(request.OrganizationName);
-        await _organizationRepository.AddAsync(organization);
-        var user = new User(request.Email, hashedPaswword, organization.Id);
+        var user = new User(request.Email, hashedPaswword);
 
         await _userRepository.AddAsync(user);
 

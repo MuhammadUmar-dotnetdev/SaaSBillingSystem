@@ -28,6 +28,11 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(u => u.Email == email);
     }
 
+    public async Task<bool> ExistsByNameAsync(string email)
+    {
+        return await _context.Users.AnyAsync(u => u.Email.ToLower() == email.ToLower());
+    }
+
     public async Task<User?> GetByIdAsync(Guid id)
     {
         var user = await _context.Users
@@ -40,5 +45,10 @@ public class UserRepository : IUserRepository
     {
         var list = await _context.Users.ToListAsync();
         return list;
+    }
+
+    public async Task<List<OrganizationMembership>> GetOrganizationMembershipsAsync(Guid userId)
+    {
+        return await _context.OrganizationMemberships.Where(om => om.UserId == userId).ToListAsync();
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SaaSBillingSystem.Application.Features.Auth.LoginUser;
 using SaaSBillingSystem.Application.Features.Auth.RegisterUser;
+using SaaSBillingSystem.Application.Features.Login;
 
 namespace SaaSBillingSystem.API.Controllers;
 
@@ -24,7 +25,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginUserCommand request)
+    public async Task<IActionResult> Login(LoginCommand request)
     {
         var result = await _mediator.Send(request);
 
@@ -38,7 +39,7 @@ public class AuthController : ControllerBase
 
         return Ok(new
         {
-            Token = result.Value
+            Response = result.Value
         });
     }
 }

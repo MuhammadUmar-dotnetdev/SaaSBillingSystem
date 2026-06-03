@@ -22,19 +22,28 @@ namespace SaaSBillingSystem.Infrastructure.Repositories
         {
             return await _context.Organizations.AnyAsync(o => o.Name.ToLower() == name.ToLower());
         }
+        public async Task<Organization?> GetByNameAsync(string name)
+        {
+            return await _context.Organizations.FirstOrDefaultAsync(o => o.Name.ToLower() == name.ToLower());
+        }
 
         public async Task<List<Organization>> GetAllAsync()
         {
             return await _context.Organizations.ToListAsync();
         }
 
-        public async Task<List<User>> GetUsersOfOrganizationByName(string name)
+        public async Task<string?> GetNameByIdAsync(Guid id)
         {
-            return await _context.Users.Where(u => EF.Functions.ILike(u.Organization.Name, name)).ToListAsync();
+            return await _context.Organizations.Where(o => o.Id == id).Select(o => o.Name).FirstOrDefaultAsync();
         }
-        public async Task<List<User>> GetUsersOfOrganizationById(Guid id)
+
+        public async Task<List<Organization>> GetByIdsAsync(List<Guid> ids)
         {
-            return await _context.Users.Where(u => u.OrganizationId == id).ToListAsync();
+            if(ids == null || ids.Count == 0)
+            {
+                return new List<Organization>();
+            }
+            return await _context.Organizations.Where(o => ids.Contains(o.Id)).ToListAsync();
         }
     }
 }

@@ -8,8 +8,8 @@ public class Organization
 
     public DateTime CreatedAt { get; private set; }
 
-    public ICollection<User> Users { get; private set; } = new List<User>();
-
+    public ICollection<OrganizationMembership> Memberships { get; private set; } = new List<OrganizationMembership>();
+    public ICollection<Invitation> Invitations { get; private set; } = new List<Invitation>();
     private Organization() { }
 
     public Organization(string name)

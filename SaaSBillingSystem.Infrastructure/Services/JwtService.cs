@@ -28,8 +28,8 @@ namespace SaaSBillingSystem.Infrastructure.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role.ToString()),
-                new Claim("organizationId", user.OrganizationId.ToString())
+                // will implement in near future
+                //new Claim(ClaimTypes.Role, user.Memberships.R)
             };
 
             var token = new JwtSecurityToken(
