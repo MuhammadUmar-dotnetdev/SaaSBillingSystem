@@ -12,7 +12,7 @@ using SaaSBillingSystem.Infrastructure.Persistence;
 namespace SaaSBillingSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260601094838_InitialCreate")]
+    [Migration("20260604182841_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -24,6 +24,48 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Invitation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("email");
+
+                    b.Property<DateTime>("ExpiresAtUtc")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("expires_at_utc");
+
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("organization_id");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("integer")
+                        .HasColumnName("role");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("token");
+
+                    b.HasKey("Id")
+                        .HasName("pk_invitations");
+
+                    b.HasIndex("OrganizationId")
+                        .HasDatabaseName("ix_invitations_organization_id");
+
+                    b.ToTable("invitations", (string)null);
+                });
 
             modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Organization", b =>
                 {
@@ -45,6 +87,29 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                         .HasName("pk_organizations");
 
                     b.ToTable("organizations", (string)null);
+                });
+
+            modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.OrganizationMembership", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("organization_id");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("integer")
+                        .HasColumnName("role");
+
+                    b.HasKey("UserId", "OrganizationId")
+                        .HasName("pk_organization_memberships");
+
+                    b.HasIndex("OrganizationId")
+                        .HasDatabaseName("ix_organization_memberships_organization_id");
+
+                    b.ToTable("organization_memberships", (string)null);
                 });
 
             modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Plan", b =>
@@ -257,26 +322,52 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_email_verified");
 
-                    b.Property<Guid>("OrganizationId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("organization_id");
-
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("password_hash");
 
-                    b.Property<int>("Role")
-                        .HasColumnType("integer")
-                        .HasColumnName("role");
-
                     b.HasKey("Id")
                         .HasName("pk_users");
 
-                    b.HasIndex("OrganizationId")
-                        .HasDatabaseName("ix_users_organization_id");
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasDatabaseName("ix_users_email");
 
                     b.ToTable("users", (string)null);
+                });
+
+            modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Invitation", b =>
+                {
+                    b.HasOne("SaaSBillingSystem.Domain.Entities.Organization", "Organization")
+                        .WithMany("Invitations")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_invitations_organizations_organization_id");
+
+                    b.Navigation("Organization");
+                });
+
+            modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.OrganizationMembership", b =>
+                {
+                    b.HasOne("SaaSBillingSystem.Domain.Entities.Organization", "Organization")
+                        .WithMany("Memberships")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_organization_memberships_organizations_organization_id");
+
+                    b.HasOne("SaaSBillingSystem.Domain.Entities.User", "User")
+                        .WithMany("Memberships")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_organization_memberships_users_user_id");
+
+                    b.Navigation("Organization");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.PlanFeature", b =>
@@ -312,21 +403,11 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                     b.Navigation("Plan");
                 });
 
-            modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.User", b =>
-                {
-                    b.HasOne("SaaSBillingSystem.Domain.Entities.Organization", "Organization")
-                        .WithMany("Users")
-                        .HasForeignKey("OrganizationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_users_organizations_organization_id");
-
-                    b.Navigation("Organization");
-                });
-
             modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Organization", b =>
                 {
-                    b.Navigation("Users");
+                    b.Navigation("Invitations");
+
+                    b.Navigation("Memberships");
                 });
 
             modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Plan", b =>
@@ -334,6 +415,11 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                     b.Navigation("Features");
 
                     b.Navigation("Subscriptions");
+                });
+
+            modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.User", b =>
+                {
+                    b.Navigation("Memberships");
                 });
 #pragma warning restore 612, 618
         }

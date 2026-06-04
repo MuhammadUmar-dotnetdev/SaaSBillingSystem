@@ -13,6 +13,8 @@ namespace SaaSBillingSystem.API.Extensions
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<IPlanRepository, PlanRepository>();
+            services.AddScoped<IInvitationRepository, InvitationRepository>();
+            services.AddScoped<IOrganizationMembershipRepository, OrganizationMembershipRepository>();
             return services;
         }
     }

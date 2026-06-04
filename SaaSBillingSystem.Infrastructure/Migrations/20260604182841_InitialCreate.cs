@@ -54,15 +54,30 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                     email = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     password_hash = table.Column<string>(type: "text", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamptz", nullable: false),
-                    is_email_verified = table.Column<bool>(type: "boolean", nullable: false),
-                    organization_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    role = table.Column<int>(type: "integer", nullable: false)
+                    is_email_verified = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_users", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "invitations",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    organization_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    email = table.Column<string>(type: "text", nullable: false),
+                    token = table.Column<string>(type: "text", nullable: false),
+                    role = table.Column<int>(type: "integer", nullable: false),
+                    status = table.Column<int>(type: "integer", nullable: false),
+                    expires_at_utc = table.Column<DateTime>(type: "timestamptz", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_invitations", x => x.id);
                     table.ForeignKey(
-                        name: "fk_users_organizations_organization_id",
+                        name: "fk_invitations_organizations_organization_id",
                         column: x => x.organization_id,
                         principalTable: "organizations",
                         principalColumn: "id",
@@ -132,6 +147,41 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "organization_memberships",
+                columns: table => new
+                {
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    organization_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    role = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_organization_memberships", x => new { x.user_id, x.organization_id });
+                    table.ForeignKey(
+                        name: "fk_organization_memberships_organizations_organization_id",
+                        column: x => x.organization_id,
+                        principalTable: "organizations",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_organization_memberships_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_invitations_organization_id",
+                table: "invitations",
+                column: "organization_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_organization_memberships_organization_id",
+                table: "organization_memberships",
+                column: "organization_id");
+
             migrationBuilder.CreateIndex(
                 name: "ix_plan_feature_plan_id",
                 table: "plan_feature",
@@ -148,14 +198,21 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                 column: "plan_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_users_organization_id",
+                name: "ix_users_email",
                 table: "users",
-                column: "organization_id");
+                column: "email",
+                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "invitations");
+
+            migrationBuilder.DropTable(
+                name: "organization_memberships");
+
             migrationBuilder.DropTable(
                 name: "plan_feature");
 
@@ -166,10 +223,10 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                 name: "users");
 
             migrationBuilder.DropTable(
-                name: "plans");
+                name: "organizations");
 
             migrationBuilder.DropTable(
-                name: "organizations");
+                name: "plans");
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SaaSBillingSystem.Application.Features.Auth.LoginUser;
+using SaaSBillingSystem.Application.Features.Auth.RegisterOwner;
 using SaaSBillingSystem.Application.Features.Auth.RegisterUser;
 using SaaSBillingSystem.Application.Features.Login;
 
@@ -17,8 +18,15 @@ public class AuthController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPost("register")]
-    public async Task<IActionResult> Register(RegisterUserCommand request)
+    [HttpPost("register/owner")]
+    public async Task<IActionResult> RegisterOwner(RegisterOwnerCommand request)
+    {
+        var result = await _mediator.Send(request);
+        return Ok(result);
+    }
+
+    [HttpPost("register/user")]
+    public async Task<IActionResult> RegisterUser(RegisterUserCommand request)
     {
         var result = await _mediator.Send(request);
         return Ok(result);

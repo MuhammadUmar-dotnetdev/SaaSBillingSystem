@@ -10,12 +10,14 @@ namespace SaaSBillingSystem.Application.Features.Auth.RegisterOwner
     {
         private readonly IUserRepository _userRepository;
         private readonly IOrganizationRepository _organizationRepository;
+        private readonly IOrganizationMembershipRepository _organizationMembershipRepository;
         private readonly IPasswordHasher _passwordHasher;
-        public RegisterOwnerHandler(IUserRepository userRepository, IOrganizationRepository organizationRepository, IPasswordHasher passwordHasher)
+        public RegisterOwnerHandler(IUserRepository userRepository, IOrganizationRepository organizationRepository, IPasswordHasher passwordHasher, IOrganizationMembershipRepository organizationMembershipRepository)
         {
             _userRepository = userRepository;
             _organizationRepository = organizationRepository;
             _passwordHasher = passwordHasher;
+            _organizationMembershipRepository = organizationMembershipRepository;
         }
         public async Task<Result<RegisterOwnerResponse>> Handle(RegisterOwnerCommand command, CancellationToken cancellationToken)
         {
@@ -31,11 +33,11 @@ namespace SaaSBillingSystem.Application.Features.Auth.RegisterOwner
             }
             var passwordHash = _passwordHasher.Hash(command.Password);
             var newUser = new User(command.Email, passwordHash);
-
+            await _userRepository.AddAsync(newUser);
             var newOrganization = new Organization(command.OrganizationName);
-
+            await _organizationRepository.AddAsync(newOrganization);
             var newMembership = new OrganizationMembership(newUser.Id, newOrganization.Id, OrganizationRole.Owner);
-
+            await _organizationMembershipRepository.AddAsync(newMembership);
             return Result<RegisterOwnerResponse>.Success(new RegisterOwnerResponse
             {
                 UserId = newUser.Id,

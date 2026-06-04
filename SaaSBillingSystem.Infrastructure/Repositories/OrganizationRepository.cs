@@ -45,5 +45,10 @@ namespace SaaSBillingSystem.Infrastructure.Repositories
             }
             return await _context.Organizations.Where(o => ids.Contains(o.Id)).ToListAsync();
         }
+
+        public async Task<Organization?> GetByIdAsync(Guid id)
+        {
+            return await _context.Organizations.FirstOrDefaultAsync(o => o.Id == id);
+        }
     }
 }
