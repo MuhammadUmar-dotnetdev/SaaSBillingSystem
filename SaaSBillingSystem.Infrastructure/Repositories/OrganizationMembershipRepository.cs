@@ -1,4 +1,5 @@
-﻿using SaaSBillingSystem.Application.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using SaaSBillingSystem.Application.Interfaces;
 using SaaSBillingSystem.Domain.Entities;
 using SaaSBillingSystem.Infrastructure.Persistence;
 
@@ -16,6 +17,11 @@ namespace SaaSBillingSystem.Infrastructure.Repositories
         {
             await _context.OrganizationMemberships.AddAsync(organizationMembership);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> ExistsAsync(Guid userId, Guid organizationId)
+        {
+            return await _context.OrganizationMemberships.AnyAsync(om => om.UserId == userId && om.OrganizationId == organizationId);
         }
     }
 }
