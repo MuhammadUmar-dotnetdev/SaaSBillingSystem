@@ -22,6 +22,7 @@ namespace SaaSBillingSystem.Application.Features.Plans.GetAllPlans
 
             var response = plans.Select(p => new GetAllPlansResponse
             {
+                Id = p.Id,
                 Name = p.Name,
                 Description = p.Description,
                 Price = p.Price,

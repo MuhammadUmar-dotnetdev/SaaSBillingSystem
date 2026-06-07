@@ -70,6 +70,28 @@ public class Plan
         };
     }
 
+    public void Update(string name,
+        string description,
+        decimal price,
+        BillingCycle billingCycle,
+        int maxUsers,
+        int maxProjects,
+        long maxStorageInMb,
+        bool isPublic = true)
+    {
+        Name = name;
+        Description = description;
+
+        Price = price;
+        BillingCycle = billingCycle;
+
+        MaxUsers = maxUsers;
+        MaxProjects = maxProjects;
+        MaxStorageInMb = maxStorageInMb;
+
+        IsPublic = isPublic;
+    }
+
     public void UpdatePricing(decimal newPrice)
     {
         if (newPrice < 0)

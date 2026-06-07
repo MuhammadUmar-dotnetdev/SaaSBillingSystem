@@ -29,5 +29,11 @@ namespace SaaSBillingSystem.Infrastructure.Repositories
         {
             return await _context.Plans.ToListAsync();
         }
+
+        public async Task UpdateAsync(Plan plan)
+        {
+            _context.Plans.Update(plan);
+            await _context.SaveChangesAsync();
+        }
     }
 }
