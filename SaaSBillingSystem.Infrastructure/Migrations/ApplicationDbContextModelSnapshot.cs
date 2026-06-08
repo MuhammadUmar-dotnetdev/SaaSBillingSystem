@@ -215,12 +215,12 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                         .HasColumnName("updated_at_utc");
 
                     b.HasKey("Id")
-                        .HasName("pk_plan_feature");
+                        .HasName("pk_plans_features");
 
                     b.HasIndex("PlanId")
-                        .HasDatabaseName("ix_plan_feature_plan_id");
+                        .HasDatabaseName("ix_plans_features_plan_id");
 
-                    b.ToTable("plan_feature", (string)null);
+                    b.ToTable("plans_features", (string)null);
                 });
 
             modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Subscription", b =>
@@ -374,7 +374,7 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                         .HasForeignKey("PlanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_plan_feature_plans_plan_id");
+                        .HasConstraintName("fk_plans_features_plans_plan_id");
 
                     b.Navigation("Plan");
                 });

@@ -3,25 +3,14 @@
 public class PlanFeature
 {
     public Guid Id { get; private set; }
-
-    // FK to Plan
     public Guid PlanId { get; private set; }
     public Plan Plan { get; private set; } = null!;
-
-    // Feature identifier (could also be a Feature table later)
     public string Key { get; private set; } = null!;
-    // e.g. "AI_ACCESS", "API_CALLS", "ANALYTICS"
 
     public string Name { get; private set; } = null!;
     public string Description { get; private set; } = null!;
-
-    // Whether feature is enabled in this plan
     public bool IsEnabled { get; private set; }
-
-    // Optional limit (null = unlimited)
     public int? Limit { get; private set; }
-
-    // Unit of limit (requests, users, GB, etc.)
     public string? Unit { get; private set; }
 
     public DateTime CreatedAtUtc { get; private set; }

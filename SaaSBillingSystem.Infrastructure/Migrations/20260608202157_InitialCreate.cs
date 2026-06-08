@@ -85,7 +85,7 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "plan_feature",
+                name: "plans_features",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -101,9 +101,9 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_plan_feature", x => x.id);
+                    table.PrimaryKey("pk_plans_features", x => x.id);
                     table.ForeignKey(
-                        name: "fk_plan_feature_plans_plan_id",
+                        name: "fk_plans_features_plans_plan_id",
                         column: x => x.plan_id,
                         principalTable: "plans",
                         principalColumn: "id",
@@ -183,8 +183,8 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                 column: "organization_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_plan_feature_plan_id",
-                table: "plan_feature",
+                name: "ix_plans_features_plan_id",
+                table: "plans_features",
                 column: "plan_id");
 
             migrationBuilder.CreateIndex(
@@ -214,7 +214,7 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                 name: "organization_memberships");
 
             migrationBuilder.DropTable(
-                name: "plan_feature");
+                name: "plans_features");
 
             migrationBuilder.DropTable(
                 name: "subscriptions");
