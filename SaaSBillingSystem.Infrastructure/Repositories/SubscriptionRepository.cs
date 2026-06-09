@@ -15,11 +15,18 @@ namespace SaaSBillingSystem.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Guid> CreateAsync(Subscription subscription)
+        public async Task AddAsync(Subscription subscription)
         {
             await _context.Subscriptions.AddAsync(subscription);
             await _context.SaveChangesAsync();
-            return subscription.Id;
+        }
+        public async Task<Subscription?> GetByIdAsync(Guid subscriptionId)
+        {
+            return await _context.Subscriptions.FirstOrDefaultAsync(s => s.Id == subscriptionId);
+        }
+        public async Task<bool> ExistsAsync(Guid organizationId, Guid planId)
+        {
+            return await _context.Subscriptions.AnyAsync(s => s.OrganizationId == organizationId && s.PlanId == planId);
         }
 
         public async Task<Subscription?> GetByOrganization(Guid organizationId)
@@ -27,24 +34,10 @@ namespace SaaSBillingSystem.Infrastructure.Repositories
             return await _context.Subscriptions.FirstOrDefaultAsync(s => s.OrganizationId == organizationId);
         }
 
-        public async Task ActivateAsync(Guid subscriptionId)
+        public async Task UpdateAsync(Subscription subscription)
         {
-            var subscription = await _context.Subscriptions.FirstOrDefaultAsync(s => s.Id == subscriptionId);
-            if(subscription != null)
-            {
-                subscription.Activate();
-                await _context.SaveChangesAsync();
-            }
-        }
-
-        public async Task SuspendAsync(Guid subscriptionId)
-        {
-            var subscription = await _context.Subscriptions.FirstOrDefaultAsync(s => s.Id == subscriptionId);
-            if(subscription != null)
-            {
-                subscription.Suspend();
-                await _context.SaveChangesAsync();
-            }
+            _context.Subscriptions.Update(subscription);
+            await _context.SaveChangesAsync();
         }
     }
 }

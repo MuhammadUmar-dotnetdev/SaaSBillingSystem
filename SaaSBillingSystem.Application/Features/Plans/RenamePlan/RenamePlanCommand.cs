@@ -3,7 +3,7 @@ using SaaSBillingSystem.Shared.Common;
 
 namespace SaaSBillingSystem.Application.Features.Plans.RenamePlan
 {
-    public class RenamePlanCommand: IRequest<Result<bool>>
+    public class RenamePlanCommand: IRequest<Result>
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;

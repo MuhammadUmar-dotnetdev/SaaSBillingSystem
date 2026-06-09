@@ -16,6 +16,7 @@ namespace SaaSBillingSystem.API.Extensions
             services.AddScoped<IPlanFeatureRepository, PlanFeatureRepository>();
             services.AddScoped<IInvitationRepository, InvitationRepository>();
             services.AddScoped<IOrganizationMembershipRepository, OrganizationMembershipRepository>();
+            services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
             return services;
         }
     }

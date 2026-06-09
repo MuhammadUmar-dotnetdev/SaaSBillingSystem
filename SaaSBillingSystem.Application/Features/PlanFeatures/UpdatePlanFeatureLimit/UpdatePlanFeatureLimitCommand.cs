@@ -3,7 +3,7 @@ using SaaSBillingSystem.Shared.Common;
 
 namespace SaaSBillingSystem.Application.Features.PlanFeatures.UpdatePlanFeatureLimit
 {
-    public class UpdatePlanFeatureLimitCommand: IRequest<Result<bool>>
+    public class UpdatePlanFeatureLimitCommand: IRequest<Result>
     {
         public Guid Id { get; set; }
         public int Limit { get; set; }

@@ -4,7 +4,7 @@ using SaaSBillingSystem.Shared.Common;
 
 namespace SaaSBillingSystem.Application.Features.PlanFeatures.DisablePlanFeature
 {
-    public class DisablePlanFeatureHandler: IRequestHandler<DisablePlanFeatureCommand, Result<bool>>
+    public class DisablePlanFeatureHandler: IRequestHandler<DisablePlanFeatureCommand, Result>
     {
         private readonly IPlanFeatureRepository _planFeatureRepository;
         public DisablePlanFeatureHandler(IPlanFeatureRepository planFeatureRepository)
@@ -12,16 +12,16 @@ namespace SaaSBillingSystem.Application.Features.PlanFeatures.DisablePlanFeature
             _planFeatureRepository = planFeatureRepository;
         }
 
-        public async Task<Result<bool>> Handle(DisablePlanFeatureCommand command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(DisablePlanFeatureCommand command, CancellationToken cancellationToken)
         {
             var planFeature = await _planFeatureRepository.GetByIdAsync(command.Id);
             if (planFeature == null)
             {
-                return Result<bool>.Failure($"Planfeature with id {command.Id} was not found");
+                return Result.Failure($"Planfeature with id {command.Id} was not found");
             }
             planFeature.Disable();
             await _planFeatureRepository.UpdateAsync(planFeature);
-            return Result<bool>.Success(true);
+            return Result.Success();
         }
     }
 }

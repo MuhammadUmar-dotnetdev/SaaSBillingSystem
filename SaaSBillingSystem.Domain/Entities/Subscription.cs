@@ -1,4 +1,5 @@
 ﻿using SaaSBillingSystem.Domain.Enums;
+using SaaSBillingSystem.Shared.Common;
 
 namespace SaaSBillingSystem.Domain.Entities;
 
@@ -63,10 +64,14 @@ public class Subscription
         };
     }
 
-    public void Activate()
+    public Result Activate()
     {
+        if (Status == SubscriptionStatus.Active)
+            return Result.Failure("Subscription is already active.");
+
         Status = SubscriptionStatus.Active;
-        UpdatedAtUtc = DateTime.UtcNow;
+        IsTrial = false;
+        return Result.Success();
     }
 
     public void MarkPastDue()
@@ -75,10 +80,15 @@ public class Subscription
         UpdatedAtUtc = DateTime.UtcNow;
     }
 
-    public void Suspend()
+    public Result Suspend()
     {
+        if(Status == SubscriptionStatus.Suspended)
+        {
+            return Result.Failure("Subscription is already suspended");
+        }
         Status = SubscriptionStatus.Suspended;
         UpdatedAtUtc = DateTime.UtcNow;
+        return Result.Success();
     }
 
     public void Expire()

@@ -4,7 +4,7 @@ using SaaSBillingSystem.Shared.Common;
 
 namespace SaaSBillingSystem.Application.Features.PlanFeatures.UpdatePlanFeatureLimit
 {
-    public class UpdatePlanFeatureLimitHandler: IRequestHandler<UpdatePlanFeatureLimitCommand, Result<bool>>
+    public class UpdatePlanFeatureLimitHandler: IRequestHandler<UpdatePlanFeatureLimitCommand, Result>
     {
         private readonly IPlanFeatureRepository _planFeatureRepository;
         public UpdatePlanFeatureLimitHandler(IPlanFeatureRepository planFeatureRepository)
@@ -12,16 +12,16 @@ namespace SaaSBillingSystem.Application.Features.PlanFeatures.UpdatePlanFeatureL
             _planFeatureRepository = planFeatureRepository;
         }
 
-        public async Task<Result<bool>> Handle(UpdatePlanFeatureLimitCommand command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdatePlanFeatureLimitCommand command, CancellationToken cancellationToken)
         {
             var planFeature = await _planFeatureRepository.GetByIdAsync(command.Id);
             if (planFeature == null)
             {
-                return Result<bool>.Failure($"Planfeature with id {command.Id} was not found");
+                return Result.Failure($"Planfeature with id {command.Id} was not found");
             }
             planFeature.UpdateLimit(command.Limit, command.Unit);
             await _planFeatureRepository.UpdateAsync(planFeature);
-            return Result<bool>.Success(true);
+            return Result.Success();
         }
     }
 }

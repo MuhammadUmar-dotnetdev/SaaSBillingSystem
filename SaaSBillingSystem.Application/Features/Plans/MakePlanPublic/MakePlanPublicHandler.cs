@@ -4,7 +4,7 @@ using SaaSBillingSystem.Shared.Common;
 
 namespace SaaSBillingSystem.Application.Features.Plans.MakePlanPublic
 {
-    public class MakePlanPublicHandler: IRequestHandler<MakePlanPublicCommand, Result<bool>>
+    public class MakePlanPublicHandler: IRequestHandler<MakePlanPublicCommand, Result>
     {
         private readonly IPlanRepository _planRepository;
         public MakePlanPublicHandler(IPlanRepository planRepository)
@@ -12,16 +12,16 @@ namespace SaaSBillingSystem.Application.Features.Plans.MakePlanPublic
             _planRepository = planRepository;
         }
 
-        public async Task<Result<bool>> Handle(MakePlanPublicCommand command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(MakePlanPublicCommand command, CancellationToken cancellationToken)
         {
             var plan = await _planRepository.GetPlanByIdAsync(command.Id);
             if (plan == null)
             {
-                return Result<bool>.Failure($"Plan with id {command.Id} was not found");
+                return Result.Failure($"Plan with id {command.Id} was not found");
             }
             plan.MakePublic();
             await _planRepository.UpdateAsync(plan);
-            return Result<bool>.Success(true);
+            return Result.Success();
         }
     }
 }

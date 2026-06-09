@@ -5,7 +5,7 @@ using SaaSBillingSystem.Shared.Common;
 
 namespace SaaSBillingSystem.Application.Features.Plans.MakePlanPrivate
 {
-    public class MakePlanPrivateHandler: IRequestHandler<MakePlanPrivateCommand, Result<bool>>
+    public class MakePlanPrivateHandler: IRequestHandler<MakePlanPrivateCommand, Result>
     {
         private readonly IPlanRepository _planRepository;
         public MakePlanPrivateHandler(IPlanRepository planRepository)
@@ -13,16 +13,16 @@ namespace SaaSBillingSystem.Application.Features.Plans.MakePlanPrivate
             _planRepository = planRepository;
         }
 
-        public async Task<Result<bool>> Handle(MakePlanPrivateCommand command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(MakePlanPrivateCommand command, CancellationToken cancellationToken)
         {
             var plan = await _planRepository.GetPlanByIdAsync(command.Id);
             if (plan == null)
             {
-                return Result<bool>.Failure($"Plan with id {command.Id} was not found");
+                return Result.Failure($"Plan with id {command.Id} was not found");
             }
             plan.MakePrivate();
             await _planRepository.UpdateAsync(plan);
-            return Result<bool>.Success(true);
+            return Result.Success();
         }
     }
 }
