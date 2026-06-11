@@ -74,10 +74,15 @@ public class Subscription
         return Result.Success();
     }
 
-    public void MarkPastDue()
+    public Result MarkPastDue()
     {
+        if(Status == SubscriptionStatus.PastDue)
+        {
+            return Result.Failure("Subscription is already set to past due.");
+        }
         Status = SubscriptionStatus.PastDue;
         UpdatedAtUtc = DateTime.UtcNow;
+        return Result.Success();
     }
 
     public Result Suspend()
@@ -91,56 +96,111 @@ public class Subscription
         return Result.Success();
     }
 
-    public void Expire()
+    public Result Expire()
     {
+        if(Status == SubscriptionStatus.Expired)
+        {
+            return Result.Failure("Subscription is already expired");
+        }
         Status = SubscriptionStatus.Expired;
         AutoRenew = false;
         UpdatedAtUtc = DateTime.UtcNow;
+        return Result.Success();
     }
 
-    public void CancelImmediately()
+    public Result CancelImmediately()
     {
+        if (Status == SubscriptionStatus.Cancelled)
+        {
+            return Result.Failure("Subscription is already expired");
+        }
         Status = SubscriptionStatus.Cancelled;
         CancelledAtUtc = DateTime.UtcNow;
         AutoRenew = false;
         UpdatedAtUtc = DateTime.UtcNow;
+        return Result.Success();
     }
 
-    public void CancelAtEndOfPeriod()
+    public Result CancelAtEndOfPeriod()
     {
+        if (Status == SubscriptionStatus.Cancelled)
+        {
+            return Result.Failure("Subscription is already cancelled.");
+        }
+
+        if (Status == SubscriptionStatus.Expired)
+        {
+            return Result.Failure("Subscription is already expired.");
+        }
+
+        if (CancelAtPeriodEnd)
+        {
+            return Result.Failure("Subscription is already scheduled for cancellation.");
+        }
+
         CancelAtPeriodEnd = true;
         AutoRenew = false;
         UpdatedAtUtc = DateTime.UtcNow;
+
+        return Result.Success();
     }
 
-    public void Resume()
+    public Result Resume()
     {
-        if (Status != SubscriptionStatus.Cancelled &&
-            Status != SubscriptionStatus.Expired)
+        if (Status == SubscriptionStatus.Cancelled)
         {
-            CancelAtPeriodEnd = false;
-            AutoRenew = true;
-            UpdatedAtUtc = DateTime.UtcNow;
+            return Result.Failure("Cannot resume a cancelled subscription.");
         }
+
+        if (Status == SubscriptionStatus.Expired)
+        {
+            return Result.Failure("Cannot resume an expired subscription.");
+        }
+
+        if (!CancelAtPeriodEnd)
+        {
+            return Result.Failure("Subscription is not scheduled for cancellation.");
+        }
+
+        CancelAtPeriodEnd = false;
+        AutoRenew = true;
+        UpdatedAtUtc = DateTime.UtcNow;
+
+        return Result.Success();
     }
 
-    public void Renew(DateTime newEndDateUtc)
+    public Result Renew(DateTime newEndDateUtc)
     {
+        if(EndDateUtc == newEndDateUtc)
+        {
+            return Result.Failure("This plan already have end date set to this");
+        }
         EndDateUtc = newEndDateUtc;
         Status = SubscriptionStatus.Active;
         UpdatedAtUtc = DateTime.UtcNow;
+        return Result.Success();
     }
 
-    public void UpgradePlan(Guid newPlanId)
+    public Result UpgradePlan(Guid newPlanId)
     {
+        if(PlanId == newPlanId)
+        {
+            return Result.Failure("This subscription already have this plan");
+        }
         PlanId = newPlanId;
         UpdatedAtUtc = DateTime.UtcNow;
+        return Result.Success();
     }
 
-    public void DowngradePlan(Guid newPlanId)
+    public Result DowngradePlan(Guid newPlanId)
     {
+        if(PlanId == newPlanId)
+        {
+            return Result.Failure("This subscription already belongs to this plan");
+        }
         PlanId = newPlanId;
         UpdatedAtUtc = DateTime.UtcNow;
+        return Result.Success();
     }
 
     public bool IsActive()

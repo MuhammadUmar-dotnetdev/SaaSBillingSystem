@@ -9,5 +9,6 @@ namespace SaaSBillingSystem.Application.Interfaces
         Task<Plan?> GetPlanByIdAsync(Guid id);
         Task<List<Plan>> GetAllPlansAsync();
         Task UpdateAsync(Plan plan);
+        Task<bool> ExistsAsync(Guid id);
     }
 }
