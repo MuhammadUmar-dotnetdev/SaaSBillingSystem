@@ -1,4 +1,6 @@
-﻿namespace SaaSBillingSystem.Application.Features.Invoices.InvoicesDTOs
+﻿using SaaSBillingSystem.Domain.Enums;
+
+namespace SaaSBillingSystem.Application.Features.Invoices.InvoicesDTOs
 {
     public class InvoiceResponse
     {
