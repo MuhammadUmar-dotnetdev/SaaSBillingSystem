@@ -25,6 +25,10 @@ namespace SaaSBillingSystem.Infrastructure.Repositories
             return await _context.Plans.FirstOrDefaultAsync(p => p.Id == id);
         }
 
+        public async Task<List<Plan>> GetByIdsAsync(List<Guid> ids)
+        {
+            return await _context.Plans.Where(p => ids.Contains(p.Id)).ToListAsync();
+        }
         public async Task<List<Plan>> GetAllPlansAsync()
         {
             return await _context.Plans.ToListAsync();

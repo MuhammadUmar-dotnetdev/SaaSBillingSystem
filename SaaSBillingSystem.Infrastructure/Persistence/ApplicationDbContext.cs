@@ -37,4 +37,5 @@ public class ApplicationDbContext : DbContext
     public DbSet<Organization> Organizations => Set<Organization>();
     public DbSet<OrganizationMembership> OrganizationMemberships => Set<OrganizationMembership>();
     public DbSet<Invitation> Invitations => Set<Invitation>();
+    public DbSet<Invoice> Invoices => Set<Invoice>();
 }
