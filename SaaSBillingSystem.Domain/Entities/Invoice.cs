@@ -12,7 +12,7 @@ public class Invoice
     public Guid SubscriptionId { get; private set; }
 
     public Subscription Subscription { get; private set; } = null!;
-
+    public ICollection<Payment> Payments { get; private set; } = null!;
     public decimal Amount { get; private set; }
 
     public DateTime IssuedAt { get; private set; }
