@@ -13,7 +13,6 @@ public class User
     public DateTime CreatedAt { get; private set; }
 
     public bool IsEmailVerified { get; private set; }
-
     public ICollection<OrganizationMembership> Memberships { get; private set; } = new List<OrganizationMembership>();
     // Constructor (important for domain control)
     public User(string email, string passwordHash)

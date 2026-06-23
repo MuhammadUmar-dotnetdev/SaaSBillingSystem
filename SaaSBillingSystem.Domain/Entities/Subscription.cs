@@ -13,6 +13,9 @@ public class Subscription
     public Guid PlanId { get; private set; }
     public Plan Plan { get; private set; } = null!;
 
+    public Guid InvoiceId { get; private set; }
+    public Invoice Invoice { get; private set; } = null!;
+
     public SubscriptionStatus Status { get; private set; }
 
     public DateTime StartDateUtc { get; private set; }

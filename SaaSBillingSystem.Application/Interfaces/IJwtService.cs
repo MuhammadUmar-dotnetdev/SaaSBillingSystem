@@ -1,6 +1,10 @@
-﻿namespace SaaSBillingSystem.Application.Interfaces;
+﻿
+using SaaSBillingSystem.Application.Features.Auth.LoginUser;
+using SaaSBillingSystem.Shared.DTOs;
+
+namespace SaaSBillingSystem.Application.Interfaces;
 
 public interface IJwtService
 {
-    string GenerateToken(Domain.Entities.User user);
+    JwtDTO GenerateToken(AuthContext authContext);
 }

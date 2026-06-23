@@ -1,16 +1,4 @@
-using Microsoft.EntityFrameworkCore;
-using SaaSBillingSystem.Application;
 using SaaSBillingSystem.Application.Interfaces;
-using SaaSBillingSystem.Infrastructure.Persistence;
-using SaaSBillingSystem.Infrastructure.Repositories;
-using SaaSBillingSystem.Application.Features.Auth.RegisterUser;
-using MediatR;
-using System.Reflection;
-using Microsoft.AspNetCore.Authentication.OAuth;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
 using SaaSBillingSystem.Infrastructure.Services;
 using SaaSBillingSystem.API.Extensions;
 using SaaSBillingSystem.API.Middlewares;
@@ -57,6 +45,11 @@ namespace SaaSBillingSystem.API
                 options.AddPolicy("AdminOnly", policy =>
                 {
                     policy.RequireRole("Admin");
+                });
+
+                options.AddPolicy("UserOnly", policy =>
+                {
+                    policy.RequireRole("User");
                 });
             });
 

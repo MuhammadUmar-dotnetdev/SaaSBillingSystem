@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SaaSBillingSystem.Application.Interfaces;
 using SaaSBillingSystem.Domain.Entities;
+using SaaSBillingSystem.Domain.Enums;
 using SaaSBillingSystem.Infrastructure.Persistence;
 
 namespace SaaSBillingSystem.Infrastructure.Repositories
@@ -22,6 +23,21 @@ namespace SaaSBillingSystem.Infrastructure.Repositories
         public async Task<bool> ExistsAsync(Guid userId, Guid organizationId)
         {
             return await _context.OrganizationMemberships.AnyAsync(om => om.UserId == userId && om.OrganizationId == organizationId);
+        }
+
+        public async Task<List<OrganizationRole>> GetRoleAsync(Guid userId)
+        {
+            return await _context.OrganizationMemberships.Where(om => om.UserId == userId).Select(om => om.Role).ToListAsync();
+        }
+
+        public async Task<OrganizationMembership?> GetAsync(Guid userId, Guid organizationId)
+        {
+            return await _context.OrganizationMemberships.FirstOrDefaultAsync(om => om.UserId == userId && om.OrganizationId == organizationId);
+        }
+
+        public async Task<List<OrganizationMembership>> GetByUserIdAsync(Guid userId)
+        {
+            return await _context.OrganizationMemberships.Where(om => om.UserId == userId).ToListAsync();
         }
     }
 }

@@ -14,6 +14,11 @@ namespace SaaSBillingSystem.API.Controllers
         {
             _mediator = mediator;
         }
+
+        [EndpointSummary("Create Invitation")]
+        [EndpointDescription("This endpoint creates new invitation in a system")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPost("add")]
         public async Task<IActionResult> AddAsync(CreateInvitationCommand command)
         {
@@ -24,6 +29,7 @@ namespace SaaSBillingSystem.API.Controllers
             }
             return Ok(result.Value);
         }
+
         [HttpPost("accept")]
         public async Task<IActionResult> AcceptAsync(AcceptInvitationCommand command)
         {

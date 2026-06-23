@@ -27,6 +27,11 @@ namespace SaaSBillingSystem.API.Controllers
         {
             _mediator = mediator;
         }
+
+        [EndpointSummary("Create Subscription")]
+        [EndpointDescription("This endpoint creates new subscription in a system")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPost("create")]
         public async Task<IActionResult> CreateAsync(CreateSubscriptionCommand command)
         {
@@ -38,6 +43,10 @@ namespace SaaSBillingSystem.API.Controllers
             return Ok(result);
         }
 
+        [EndpointSummary("Activate Subscription")]
+        [EndpointDescription("This endpoint avtivates existing subscription in a system")]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPatch("activate/{id:guid}")]
         public async Task<IActionResult> ActivateAsync(Guid id)
         {
@@ -49,6 +58,10 @@ namespace SaaSBillingSystem.API.Controllers
             return Ok(result);
         }
 
+        [EndpointSummary("Suspend Subscription")]
+        [EndpointDescription("This endpoint suspend existing subscription in a system")]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPatch("suspend/{id:guid}")]
         public async Task<IActionResult> SuspendAsync(Guid id)
         {
@@ -60,6 +73,10 @@ namespace SaaSBillingSystem.API.Controllers
             return Ok(result);
         }
 
+        [EndpointSummary("Expire Subscription")]
+        [EndpointDescription("This endpoint expires existing subscription in a system")]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPatch("expire/{id:guid}")]
         public async Task<IActionResult> ExpireAsync(Guid id)
         {
@@ -71,6 +88,10 @@ namespace SaaSBillingSystem.API.Controllers
             return Ok(result);
         }
 
+        [EndpointSummary("Cancel Subscription")]
+        [EndpointDescription("This endpoint cancels existing subscription in a system")]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPatch("cancel/{id:guid}")]
         public async Task<IActionResult> CancelAsync(Guid id)
         {
@@ -82,7 +103,11 @@ namespace SaaSBillingSystem.API.Controllers
             return Ok(result);
         }
 
-        [HttpPatch("markpastdue/{id:guid}")]
+        [EndpointSummary("Mark Subscription Past Due")]
+        [EndpointDescription("This endpoint marks existing subscription as past due in a system")]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpPatch("mark-past-due/{id:guid}")]
         public async Task<IActionResult> MarkPastDueAsync(Guid id)
         {
             var result = await _mediator.Send(new MarkPastDueSubscriptionCommand(id));
@@ -93,6 +118,10 @@ namespace SaaSBillingSystem.API.Controllers
             return Ok(result);
         }
 
+        [EndpointSummary("Upgrade Subscription")]
+        [EndpointDescription("This endpoint upgrades existing subscription in a system by assigning it new plan")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPatch("upgrade")]
         public async Task<IActionResult> UpgradePlanAsync(UpgradePlanCommand command)
         {
@@ -104,6 +133,10 @@ namespace SaaSBillingSystem.API.Controllers
             return Ok(result);
         }
 
+        [EndpointSummary("Downgrade Subscription")]
+        [EndpointDescription("This endpoint downgrades existing subscription in a system by assigning it new plan")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPatch("downgrade")]
         public async Task<IActionResult> UpgradePlanAsync(DowngradePlanCommand command)
         {
@@ -115,6 +148,10 @@ namespace SaaSBillingSystem.API.Controllers
             return Ok(result);
         }
 
+        [EndpointSummary("Renew Subscription")]
+        [EndpointDescription("This endpoint renews existing subscription in a system")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPatch("renew")]
         public async Task<IActionResult> RenewAsync(RenewSubscriptionCommand command)
         {
@@ -126,7 +163,11 @@ namespace SaaSBillingSystem.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("isactive/{id:guid}")]
+        [EndpointSummary("Is Subscription Active")]
+        [EndpointDescription("This endpoint checks if existing subscription in a system is active or not")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("is-active/{id:guid}")]
         public async Task<IActionResult> IsActiveAsync(Guid id)
         {
             var result = await _mediator.Send(new IsSubscriptionActiveCommand(id));
@@ -137,7 +178,11 @@ namespace SaaSBillingSystem.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("isexpired/{id:guid}")]
+        [EndpointSummary("Is Subscription Expired")]
+        [EndpointDescription("This endpoint checks if existing subscription in a system is expired or not")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("is-expired/{id:guid}")]
         public async Task<IActionResult> IsExpiredAsync(Guid id)
         {
             var result = await _mediator.Send(new IsSubscriptionExpiredCommand(id));
@@ -148,7 +193,11 @@ namespace SaaSBillingSystem.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("isintrial/{id:guid}")]
+        [EndpointSummary("Is Subscription In Trial")]
+        [EndpointDescription("This endpoint checks if existing subscription in a system is in trial or not")]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("is-in-trial/{id:guid}")]
         public async Task<IActionResult> IsInTrialAsync(Guid id)
         {
             var result = await _mediator.Send(new IsSubscriptionInTrialCommand(id));
@@ -159,6 +208,10 @@ namespace SaaSBillingSystem.API.Controllers
             return Ok(result);
         }
 
+        [EndpointSummary("Resume Subscription")]
+        [EndpointDescription("This endpoint resumes existing subscription in a system")]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPatch("resume/{id:guid}")]
         public async Task<IActionResult> ResumeAsync(Guid id)
         {
@@ -170,8 +223,11 @@ namespace SaaSBillingSystem.API.Controllers
             return Ok(result);
         }
 
-
-        [HttpPatch("cancelatendofperiod/{id:guid}")]
+        [EndpointSummary("Cancel Subscription At The End Of Period")]
+        [EndpointDescription("This endpoint cancels existing subscription in a system when set end period ends")]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpPatch("cancel-at-end-of-period/{id:guid}")]
         public async Task<IActionResult> CancelAtEndOfPeriodAsync(Guid id)
         {
             var result = await _mediator.Send(new CancelSubscriptionAtEndOfPeriodCommand(id));

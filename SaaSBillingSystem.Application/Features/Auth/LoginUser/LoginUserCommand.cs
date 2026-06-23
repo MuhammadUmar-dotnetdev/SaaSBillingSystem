@@ -3,7 +3,7 @@ using SaaSBillingSystem.Shared.Common;
 
 namespace SaaSBillingSystem.Application.Features.Auth.LoginUser;
 
-public class LoginUserCommand : IRequest<Result<string>>
+public class LoginUserCommand : IRequest<Result<LoginUserResponse>>
 {
     public string Email { get; set; } = string.Empty;
 

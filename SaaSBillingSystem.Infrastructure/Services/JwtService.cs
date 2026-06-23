@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using SaaSBillingSystem.Application.Features.Auth.LoginUser;
 using SaaSBillingSystem.Application.Interfaces;
-using SaaSBillingSystem.Domain.Entities;
+using SaaSBillingSystem.Shared.DTOs;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -16,7 +17,7 @@ namespace SaaSBillingSystem.Infrastructure.Services
             _configuration = configuration;
         }
 
-        public string GenerateToken(User user)
+        public JwtDTO GenerateToken(AuthContext authContext)
         {
             var jwtSettings = _configuration.GetSection("Jwt");
 
@@ -24,12 +25,14 @@ namespace SaaSBillingSystem.Infrastructure.Services
 
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                // will implement in near future
-                //new Claim(ClaimTypes.Role, user.Memberships.R)
+                new Claim(ClaimTypes.NameIdentifier, authContext.UserId.ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, authContext.UserId.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, authContext.Email),
+                new Claim("organization_id", authContext.OrganizationId.ToString()),
+                new Claim(ClaimTypes.Role, authContext.Role.ToString()),
+                new Claim("organization_name", authContext.OrganizationName)
             };
 
             var token = new JwtSecurityToken(
@@ -40,7 +43,12 @@ namespace SaaSBillingSystem.Infrastructure.Services
                     signingCredentials: credentials
                 );
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var generatedToken = new JwtSecurityTokenHandler().WriteToken(token);
+            return new JwtDTO
+            {
+                AccessToken = generatedToken,
+                ExpiresAtUtc = token.ValidTo
+            };
         }
     }
 }

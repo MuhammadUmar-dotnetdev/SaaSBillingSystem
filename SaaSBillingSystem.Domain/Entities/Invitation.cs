@@ -1,4 +1,6 @@
 ﻿using SaaSBillingSystem.Domain.Enums;
+using SaaSBillingSystem.Shared.Common;
+using System.Security.Cryptography;
 
 namespace SaaSBillingSystem.Domain.Entities
 {
@@ -19,6 +21,12 @@ namespace SaaSBillingSystem.Domain.Entities
 
         public DateTime ExpiresAtUtc { get; private set; }
 
+        public DateTime CreatedAtUtc { get; private set; }
+
+        public DateTime? AcceptedAtUtc { get; private set; }
+
+        public DateTime? RevokedAtUtc { get; private set; }
+
         private Invitation() { }
 
         public Invitation(
@@ -37,14 +45,55 @@ namespace SaaSBillingSystem.Domain.Entities
             ExpiresAtUtc = DateTime.UtcNow.AddDays(7);
         }
 
-        public void Accept()
+        public Result Accept()
         {
+            if(Status == InvitationStatus.Expired)
+            {
+                return Result.Failure("Expired invitation can't be accepted");
+            }
+
+            if(Status == InvitationStatus.Revoked)
+            {
+                return Result.Failure("Revoked invitation can't be accepted");
+            }
+
+            if (Status == InvitationStatus.Accepted)
+            {
+                return Result.Failure("Invitation is already accepted");
+            }
             Status = InvitationStatus.Accepted;
+            AcceptedAtUtc = DateTime.UtcNow;
+            return Result.Success();
         }
 
-        public void Revoke()
+        public Result Revoke()
         {
+            if (Status == InvitationStatus.Expired)
+            {
+                return Result.Failure("Expired invitation can't be revoked");
+            }
+
+            if (Status == InvitationStatus.Revoked)
+            {
+                return Result.Failure("Invitation is already accepted");
+            }
             Status = InvitationStatus.Revoked;
+            RevokedAtUtc = DateTime.UtcNow;
+            AcceptedAtUtc = null;
+            return Result.Success();
+        }
+
+        public Result Resend()
+        {
+            if (Status != InvitationStatus.Pending)
+            {
+                return Result.Failure("Only pending invitations can be resent.");
+            }
+
+            Token = RandomNumberGenerator.GetHexString(32);
+
+            ExpiresAtUtc = DateTime.UtcNow.AddDays(7);
+            return Result.Success();
         }
     }
 }
