@@ -1,10 +1,12 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SaaSBillingSystem.Application.Features.Invitations.AcceptInvitation;
 using SaaSBillingSystem.Application.Features.Invitations.AddInvitation;
 
 namespace SaaSBillingSystem.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class InvitationController: ControllerBase

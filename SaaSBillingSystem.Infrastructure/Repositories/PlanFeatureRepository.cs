@@ -13,23 +13,23 @@ namespace SaaSBillingSystem.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task AddAsync(PlanFeature planFeature)
+        public async Task AddAsync(Feature planFeature)
         {
             await _context.PlansFeatures.AddAsync(planFeature);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<PlanFeature?> GetByIdAsync(Guid id)
+        public async Task<Feature?> GetByIdAsync(Guid id)
         {
             return await _context.PlansFeatures.FirstOrDefaultAsync(pf => pf.Id == id);
         }
 
-        public async Task<List<PlanFeature>> GetAllAsync()
+        public async Task<List<Feature>> GetAllAsync()
         {
             return await _context.PlansFeatures.AsNoTracking().ToListAsync();
         }
 
-        public async Task UpdateAsync(PlanFeature planFeature)
+        public async Task UpdateAsync(Feature planFeature)
         {
             _context.PlansFeatures.Update(planFeature);
             await _context.SaveChangesAsync();

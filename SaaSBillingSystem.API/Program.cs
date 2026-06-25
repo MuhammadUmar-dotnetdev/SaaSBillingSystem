@@ -51,6 +51,11 @@ namespace SaaSBillingSystem.API
                 {
                     policy.RequireRole("User");
                 });
+
+                options.AddPolicy("OwnerOnly", policy =>
+                {
+                    policy.RequireRole("Owner");
+                });
             });
 
             var app = builder.Build();

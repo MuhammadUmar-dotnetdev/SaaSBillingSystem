@@ -10,7 +10,16 @@ namespace SaaSBillingSystem.Infrastructure.Persistence.Configurations
         {
             builder.HasKey(p => p.Id);
 
+            builder.Property(p => p.BillingCycle)
+                .HasConversion<int>();
 
+            builder.Property(p => p.Price)
+                .HasPrecision(18, 2);
+
+            builder.HasMany(p => p.Subscriptions)
+                .WithOne(s => s.Plan)
+                .HasForeignKey(s => s.PlanId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -10,13 +10,13 @@ namespace SaaSBillingSystem.Infrastructure.Persistence.Configurations
         {
             builder.HasKey(i => i.Id);
 
-            builder.Property(x => x.Amount)
+            builder.Property(i => i.Amount)
                 .HasPrecision(18, 2);
 
             builder.Property(i => i.Status)
                 .HasConversion<int>();
 
-            builder.Property(x => x.InvoiceNumber)
+            builder.Property(i => i.InvoiceNumber)
                    .HasMaxLength(200);
 
             builder.HasOne(i => i.Subscription)

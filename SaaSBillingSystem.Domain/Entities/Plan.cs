@@ -26,11 +26,9 @@ public class Plan
     public bool IsPublic { get; private set; }
 
     // Navigation
-    public ICollection<PlanFeature> Features { get; private set; }
-        = new List<PlanFeature>();
+    public ICollection<PlanFeature> PlanFeatures { get; private set; } = new List<PlanFeature>();
 
-    public ICollection<Subscription> Subscriptions { get; private set; }
-        = new List<Subscription>();
+    public ICollection<Subscription> Subscriptions { get; private set; } = new List<Subscription>();
 
     // Audit
     public DateTime CreatedAtUtc { get; private set; }
@@ -142,18 +140,6 @@ public class Plan
     public void MakePublic()
     {
         IsPublic = true;
-        UpdatedAtUtc = DateTime.UtcNow;
-    }
-
-    public void AddFeature(PlanFeature feature)
-    {
-        Features.Add(feature);
-        UpdatedAtUtc = DateTime.UtcNow;
-    }
-
-    public void RemoveFeature(PlanFeature feature)
-    {
-        Features.Remove(feature);
         UpdatedAtUtc = DateTime.UtcNow;
     }
 }
