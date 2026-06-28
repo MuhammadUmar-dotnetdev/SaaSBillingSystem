@@ -1,4 +1,6 @@
 ﻿using SaaSBillingSystem.Application.Interfaces;
+using SaaSBillingSystem.Application.Queries;
+using SaaSBillingSystem.Infrastructure.QueriesImplementation;
 using SaaSBillingSystem.Infrastructure.Repositories;
 using SaaSBillingSystem.Infrastructure.Services;
 
@@ -13,12 +15,14 @@ namespace SaaSBillingSystem.API.Extensions
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<IPlanRepository, PlanRepository>();
+            services.AddScoped<IFeatureRepository, FeatureRepository>();
             services.AddScoped<IPlanFeatureRepository, PlanFeatureRepository>();
             services.AddScoped<IInvitationRepository, InvitationRepository>();
             services.AddScoped<IOrganizationMembershipRepository, OrganizationMembershipRepository>();
             services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();
             services.AddScoped<IPaymentRepository, PaymentRepository>();
+            services.AddScoped<IPlanFeatureQueries, PlanFeatureQueries>();
             return services;
         }
     }

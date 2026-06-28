@@ -22,12 +22,56 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Feature", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("key");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("updated_at_utc");
+
+                    b.HasKey("Id")
+                        .HasName("pk_features");
+
+                    b.ToTable("features", (string)null);
+                });
+
             modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Invitation", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
+
+                    b.Property<DateTime?>("AcceptedAtUtc")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("accepted_at_utc");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at_utc");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -41,6 +85,10 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                     b.Property<Guid>("OrganizationId")
                         .HasColumnType("uuid")
                         .HasColumnName("organization_id");
+
+                    b.Property<DateTime?>("RevokedAtUtc")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("revoked_at_utc");
 
                     b.Property<int>("Role")
                         .HasColumnType("integer")
@@ -64,6 +112,77 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                     b.ToTable("invitations", (string)null);
                 });
 
+            modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Invoice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<DateTime?>("CancelledAtUtc")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("cancelled_at_utc");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("due_date");
+
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("invoice_number");
+
+                    b.Property<DateTime>("IssuedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("issued_at");
+
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("organization_id");
+
+                    b.Property<DateTime?>("OverdueAtUtc")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("overdue_at_utc");
+
+                    b.Property<DateTime?>("PaidAtUtc")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("paid_at_utc");
+
+                    b.Property<DateTime>("PeriodEndUtc")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("period_end_utc");
+
+                    b.Property<DateTime>("PeriodStartUtc")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("period_start_utc");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<Guid>("SubscriptionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("subscription_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_invoices");
+
+                    b.HasIndex("OrganizationId")
+                        .HasDatabaseName("ix_invoices_organization_id");
+
+                    b.HasIndex("SubscriptionId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_invoices_subscription_id");
+
+                    b.ToTable("invoices", (string)null);
+                });
+
             modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Organization", b =>
                 {
                     b.Property<Guid>("Id")
@@ -71,14 +190,18 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamptz")
-                        .HasColumnName("created_at");
+                        .HasColumnName("created_at_utc");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("name");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("updated_at_utc");
 
                     b.HasKey("Id")
                         .HasName("pk_organizations");
@@ -107,6 +230,63 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                         .HasDatabaseName("ix_organization_memberships_organization_id");
 
                     b.ToTable("organization_memberships", (string)null);
+                });
+
+            modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Payment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<int>("Currency")
+                        .HasColumnType("integer")
+                        .HasColumnName("currency");
+
+                    b.Property<string>("ExternalPaymentId")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("external_payment_id");
+
+                    b.Property<string>("FailureReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("failure_reason");
+
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("invoice_id");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("paid_at");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("provider");
+
+                    b.Property<DateTime?>("RefundedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("refunded_at");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.HasKey("Id")
+                        .HasName("pk_payments");
+
+                    b.HasIndex("InvoiceId")
+                        .HasDatabaseName("ix_payments_invoice_id");
+
+                    b.ToTable("payments", (string)null);
                 });
 
             modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Plan", b =>
@@ -155,7 +335,8 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                         .HasColumnName("name");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("numeric")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
                         .HasColumnName("price");
 
                     b.Property<DateTime>("UpdatedAtUtc")
@@ -170,57 +351,37 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
 
             modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.PlanFeature", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("PlanId")
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("plan_id");
 
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("created_at_utc");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("description");
+                    b.Property<Guid>("FeatureId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("feature_id");
 
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("boolean")
                         .HasColumnName("is_enabled");
 
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("key");
-
                     b.Property<int?>("Limit")
                         .HasColumnType("integer")
                         .HasColumnName("limit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.Property<Guid>("PlanId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("plan_id");
 
                     b.Property<string>("Unit")
                         .HasColumnType("text")
                         .HasColumnName("unit");
 
-                    b.Property<DateTime>("UpdatedAtUtc")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("updated_at_utc");
+                    b.HasKey("PlanId", "FeatureId")
+                        .HasName("pk_plan_feature");
 
-                    b.HasKey("Id")
-                        .HasName("pk_plans_features");
+                    b.HasIndex("FeatureId")
+                        .HasDatabaseName("ix_plan_feature_feature_id");
 
-                    b.HasIndex("PlanId")
-                        .HasDatabaseName("ix_plans_features_plan_id");
+                    b.HasIndex("PlanId", "FeatureId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_plan_feature_plan_id_feature_id");
 
-                    b.ToTable("plans_features", (string)null);
+                    b.ToTable("plan_feature", (string)null);
                 });
 
             modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Subscription", b =>
@@ -257,6 +418,10 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                     b.Property<string>("ExternalSubscriptionId")
                         .HasColumnType("text")
                         .HasColumnName("external_subscription_id");
+
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("invoice_id");
 
                     b.Property<bool>("IsTrial")
                         .HasColumnType("boolean")
@@ -346,6 +511,27 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                     b.Navigation("Organization");
                 });
 
+            modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Invoice", b =>
+                {
+                    b.HasOne("SaaSBillingSystem.Domain.Entities.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_invoices_organizations_organization_id");
+
+                    b.HasOne("SaaSBillingSystem.Domain.Entities.Subscription", "Subscription")
+                        .WithOne("Invoice")
+                        .HasForeignKey("SaaSBillingSystem.Domain.Entities.Invoice", "SubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_invoices_subscriptions_subscription_id");
+
+                    b.Navigation("Organization");
+
+                    b.Navigation("Subscription");
+                });
+
             modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.OrganizationMembership", b =>
                 {
                     b.HasOne("SaaSBillingSystem.Domain.Entities.Organization", "Organization")
@@ -367,14 +553,35 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Payment", b =>
+                {
+                    b.HasOne("SaaSBillingSystem.Domain.Entities.Invoice", "Invoice")
+                        .WithMany("Payments")
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_payments_invoices_invoice_id");
+
+                    b.Navigation("Invoice");
+                });
+
             modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.PlanFeature", b =>
                 {
+                    b.HasOne("SaaSBillingSystem.Domain.Entities.Feature", "Feature")
+                        .WithMany("PlanFeatures")
+                        .HasForeignKey("FeatureId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_plan_feature_features_feature_id");
+
                     b.HasOne("SaaSBillingSystem.Domain.Entities.Plan", "Plan")
-                        .WithMany("Features")
+                        .WithMany("PlanFeatures")
                         .HasForeignKey("PlanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_plans_features_plans_plan_id");
+                        .HasConstraintName("fk_plan_feature_plans_plan_id");
+
+                    b.Navigation("Feature");
 
                     b.Navigation("Plan");
                 });
@@ -400,6 +607,16 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
                     b.Navigation("Plan");
                 });
 
+            modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Feature", b =>
+                {
+                    b.Navigation("PlanFeatures");
+                });
+
+            modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Invoice", b =>
+                {
+                    b.Navigation("Payments");
+                });
+
             modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Organization", b =>
                 {
                     b.Navigation("Invitations");
@@ -409,9 +626,15 @@ namespace SaaSBillingSystem.Infrastructure.Migrations
 
             modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Plan", b =>
                 {
-                    b.Navigation("Features");
+                    b.Navigation("PlanFeatures");
 
                     b.Navigation("Subscriptions");
+                });
+
+            modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.Subscription", b =>
+                {
+                    b.Navigation("Invoice")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("SaaSBillingSystem.Domain.Entities.User", b =>

@@ -23,7 +23,7 @@ namespace SaaSBillingSystem.Application.Features.Subscriptions.DowngradePlan
                 return Result.Failure($"Subscription with id {command.Id} was not found");
             }
 
-            var planExists = await _planRepository.ExistsAsync(command.NewPlanId);
+            var planExists = await _planRepository.ExistsAsync(command.NewPlanId, cancellationToken);
             if (!planExists)
             {
                 return Result.Failure($"Plan with id {command.NewPlanId} was not found");

@@ -33,7 +33,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
     public DbSet<Plan> Plans => Set<Plan>();
-    public DbSet<Feature> PlansFeatures => Set<Feature>();
+    public DbSet<Feature> Features => Set<Feature>();
+    public DbSet<PlanFeature> PlanFeatures => Set<PlanFeature>();
     public DbSet<Organization> Organizations => Set<Organization>();
     public DbSet<OrganizationMembership> OrganizationMemberships => Set<OrganizationMembership>();
     public DbSet<Invitation> Invitations => Set<Invitation>();

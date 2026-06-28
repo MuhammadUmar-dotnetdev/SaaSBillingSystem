@@ -4,10 +4,12 @@ namespace SaaSBillingSystem.Application.Interfaces
 {
     public interface IPlanFeatureRepository
     {
-        Task AddAsync(Feature planFeature);
-        Task<Feature?> GetByIdAsync(Guid id);
-        Task<List<Feature>> GetAllAsync();
-        Task UpdateAsync(Feature planFeature);
-        Task<bool> ExistsAsync(Guid planId, string key);
+        Task AddAsync(PlanFeature planFeature);
+
+        Task RemoveAsync(PlanFeature planFeature, CancellationToken cancellationToken);
+        Task UpdateAsync(PlanFeature planFeature, CancellationToken cancellationToken);
+
+        Task<PlanFeature?> GetByIdsAsync(Guid planId, Guid featureId, CancellationToken cancellationToken);
+        Task<bool> ExistsAsync(Guid planId, Guid featureId, CancellationToken cancellationToken);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace SaaSBillingSystem.Domain.Entities;
+﻿using SaaSBillingSystem.Shared.Common;
+
+namespace SaaSBillingSystem.Domain.Entities;
 
 public class Feature
 {
@@ -8,9 +10,7 @@ public class Feature
 
     public string Name { get; private set; } = null!;
     public string Description { get; private set; } = null!;
-    public bool IsEnabled { get; private set; }
-    public int? Limit { get; private set; }
-    public string? Unit { get; private set; }
+    
 
     public DateTime CreatedAtUtc { get; private set; }
     public DateTime UpdatedAtUtc { get; private set; }
@@ -20,10 +20,7 @@ public class Feature
     public static Feature Create(
         string key,
         string name,
-        string description,
-        bool isEnabled = true,
-        int? limit = null,
-        string? unit = null)
+        string description)
     {
         return new Feature
         {
@@ -33,40 +30,21 @@ public class Feature
             Name = name,
             Description = description,
 
-            IsEnabled = isEnabled,
-            Limit = limit,
-            Unit = unit,
-
             CreatedAtUtc = DateTime.UtcNow,
             UpdatedAtUtc = DateTime.UtcNow
         };
     }
 
-    public void Enable()
+    public Result Rename(string name, string description)
     {
-        IsEnabled = true;
-        UpdatedAtUtc = DateTime.UtcNow;
-    }
-
-    public void Disable()
-    {
-        IsEnabled = false;
-        UpdatedAtUtc = DateTime.UtcNow;
-    }
-
-    public void UpdateLimit(int? limit, string? unit)
-    {
-        Limit = limit;
-        Unit = unit;
-
-        UpdatedAtUtc = DateTime.UtcNow;
-    }
-
-    public void Rename(string name, string description)
-    {
+        if(Name == name || Description == description)
+        {
+            return Result.Failure("Name or description have already same value");
+        }
         Name = name;
         Description = description;
 
         UpdatedAtUtc = DateTime.UtcNow;
+        return Result.Success();
     }
 }

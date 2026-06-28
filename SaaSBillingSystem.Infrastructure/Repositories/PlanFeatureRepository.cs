@@ -13,31 +13,32 @@ namespace SaaSBillingSystem.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task AddAsync(Feature planFeature)
+        public async Task AddAsync(PlanFeature planFeature)
         {
-            await _context.PlansFeatures.AddAsync(planFeature);
+            await _context.PlanFeatures.AddAsync(planFeature);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Feature?> GetByIdAsync(Guid id)
+        public async Task<bool> ExistsAsync(Guid planId, Guid featureId, CancellationToken cancellationToken)
         {
-            return await _context.PlansFeatures.FirstOrDefaultAsync(pf => pf.Id == id);
+            return await _context.PlanFeatures.AnyAsync(pf => pf.PlanId == planId && pf.FeatureId == featureId, cancellationToken);
         }
 
-        public async Task<List<Feature>> GetAllAsync()
+        public async Task RemoveAsync(PlanFeature planFeature, CancellationToken cancellationToken)
         {
-            return await _context.PlansFeatures.AsNoTracking().ToListAsync();
+            _context.Remove(planFeature);
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task UpdateAsync(Feature planFeature)
+        public async Task UpdateAsync(PlanFeature planFeature, CancellationToken cancellationToken)
         {
-            _context.PlansFeatures.Update(planFeature);
-            await _context.SaveChangesAsync();
+            _context.Update(planFeature);
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<bool> ExistsAsync(Guid planId, string key)
+        public async Task<PlanFeature?> GetByIdsAsync(Guid planId, Guid featureId, CancellationToken cancellationToken)
         {
-            return await _context.PlansFeatures.AnyAsync(pf => pf.PlanId == planId && pf.Key == key);
+            return await _context.PlanFeatures.FirstOrDefaultAsync(pf => pf.PlanId == planId && pf.FeatureId == featureId);
         }
     }
 }

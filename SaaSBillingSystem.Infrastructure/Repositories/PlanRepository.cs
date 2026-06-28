@@ -40,9 +40,9 @@ namespace SaaSBillingSystem.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> ExistsAsync(Guid id)
+        public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
         {
-            return await _context.Plans.AnyAsync(p => p.Id == id);
+            return await _context.Plans.AnyAsync(p => p.Id == id, cancellationToken);
         }
     }
 }

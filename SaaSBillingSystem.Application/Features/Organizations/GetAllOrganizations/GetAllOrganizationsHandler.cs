@@ -18,7 +18,7 @@ namespace SaaSBillingSystem.Application.Features.Organizations.GetAllOrganizatio
             {
                 Id = o.Id,
                 Name = o.Name,
-                CreatedAt = o.CreatedAt,
+                CreatedAtUtc = o.CreatedAtUtc,
             }).ToList();
         }
     }

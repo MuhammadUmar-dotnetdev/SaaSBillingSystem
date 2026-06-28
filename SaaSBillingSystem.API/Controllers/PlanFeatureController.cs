@@ -1,12 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SaaSBillingSystem.Application.Features.PlanFeatures.AddPlanFeature;
+using SaaSBillingSystem.Application.Features.PlanFeatures.ChangePlanFeatureLimits;
 using SaaSBillingSystem.Application.Features.PlanFeatures.DisablePlanFeature;
 using SaaSBillingSystem.Application.Features.PlanFeatures.EnablePlanFeature;
-using SaaSBillingSystem.Application.Features.PlanFeatures.GetAllPlanFeatures;
-using SaaSBillingSystem.Application.Features.PlanFeatures.GetPlanFeatureById;
-using SaaSBillingSystem.Application.Features.PlanFeatures.RenamePlanFeature;
-using SaaSBillingSystem.Application.Features.PlanFeatures.UpdatePlanFeatureLimit;
+using SaaSBillingSystem.Application.Features.PlanFeatures.GetFeaturesForPlan;
+using SaaSBillingSystem.Application.Features.PlanFeatures.GetPlansForFeature;
+using SaaSBillingSystem.Application.Features.PlanFeatures.RemovePlanFeature;
 
 namespace SaaSBillingSystem.API.Controllers
 {
@@ -25,24 +25,25 @@ namespace SaaSBillingSystem.API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPost("add")]
-        public async Task<IActionResult> AddAsync([FromBody] AddPlanFeatureCommand command)
+        public async Task<IActionResult> AddAsync(AddPlanFeatureCommand command)
         {
             var result = await _mediator.Send(command);
             if(!result.IsSuccess)
             {
                 return NotFound(result.Error);
             }
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = result.Value!.Id }, result.Value);
+            //return CreatedAtAction(nameof(GetByIdAsync), new { id = result.Value }, result.Value);
+            return Ok(result);
         }
 
-        [EndpointSummary("Get PlanFeature By Id")]
-        [EndpointDescription("This endpoint returns PlanFeature by it id")]
+        [EndpointSummary("Get Plans For A Feature")]
+        [EndpointDescription("This endpoint returns Plans which owns Feature by its id")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetByIdAsync(Guid id)
+        [HttpGet("plans-for-feature/{featureId:guid}")]
+        public async Task<IActionResult> GetPlansForFeatureAsync(Guid featureId)
         {
-            var result = await _mediator.Send(new GetPlanFeatureByIdCommand(id));
+            var result = await _mediator.Send(new GetPlansForFeatureCommand(featureId));
             if (!result.IsSuccess)
             {
                 return NotFound(result.Error);
@@ -50,14 +51,28 @@ namespace SaaSBillingSystem.API.Controllers
             return Ok(result);
         }
 
-        [EndpointSummary("Get All PlanFeatures")]
-        [EndpointDescription("This endpoint returns all PlanFeatures in a system")]
+        [EndpointSummary("Get Features For A Plan")]
+        [EndpointDescription("This endpoint returns Features which are owned by Plan by its id")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpGet("get-all")]
-        public async Task<IActionResult> GetAllAsync()
+        [HttpGet("features-for-plan/{planId:guid}")]
+        public async Task<IActionResult> GetFeaturesForPlanAsync(Guid planId)
         {
-            var result = await _mediator.Send(new GetAllPlanFeaturesCommand());
+            var result = await _mediator.Send(new GetFeaturesForPlanCommand(planId));
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.Error);
+            }
+            return Ok(result);
+        }
+
+        [EndpointSummary("Remove PlanFeatures")]
+        [EndpointDescription("This endpoint returns Features which are owned by Plan by its id")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> RemovePlanFeatureAsync(RemovePlanFeatureCommand command)
+        {
+            var result = await _mediator.Send(command);
             if (!result.IsSuccess)
             {
                 return NotFound(result.Error);
@@ -66,41 +81,10 @@ namespace SaaSBillingSystem.API.Controllers
         }
 
         [EndpointSummary("Enable PlanFeatures")]
-        [EndpointDescription("This endpoint enable PlanFeature by id")]
+        [EndpointDescription("This endpoint enables Features which are owned by Plan")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpPatch("enable")]
-        public async Task<IActionResult> EnableAsync(Guid id)
-        {
-            var result = await _mediator.Send(new EnablePlanFeatureCommand(id));
-            if (!result.IsSuccess)
-            {
-                return NotFound(result.Error);
-            }
-            return Ok(result);
-        }
-
-        [EndpointSummary("Disable PlanFeatures")]
-        [EndpointDescription("This endpoint disable PlanFeature by id")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpPatch("disable")]
-        public async Task<IActionResult> DisableAsync(Guid id)
-        {
-            var result = await _mediator.Send(new DisablePlanFeatureCommand(id));
-            if (!result.IsSuccess)
-            {
-                return NotFound(result.Error);
-            }
-            return Ok(result);
-        }
-
-        [EndpointSummary("Update PlanFeature Limits")]
-        [EndpointDescription("This endpoint updates the limits of PlanFeature")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpPatch("update-limit")]
-        public async Task<IActionResult> UpdateLimitAsync(UpdatePlanFeatureLimitCommand command)
+        public async Task<IActionResult> EnablePlanFeatureAsync(EnablePlanFeatureCommand command)
         {
             var result = await _mediator.Send(command);
             if (!result.IsSuccess)
@@ -110,12 +94,25 @@ namespace SaaSBillingSystem.API.Controllers
             return Ok(result);
         }
 
-        [EndpointSummary("Rename PlanFeature")]
-        [EndpointDescription("This endpoint rename the PlanFeature")]
+        [EndpointSummary("Disable PlanFeatures")]
+        [EndpointDescription("This endpoint disables Features which are owned by Plan")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpPatch("rename")]
-        public async Task<IActionResult> RenameAsync(RenamePlanFeatureCommand command)
+        public async Task<IActionResult> DisablePlanFeatureAsync(DisablePlanFeatureCommand command)
+        {
+            var result = await _mediator.Send(command);
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.Error);
+            }
+            return Ok(result);
+        }
+
+        [EndpointSummary("Change PlanFeatures Limits")]
+        [EndpointDescription("This endpoint changes limits of Features which are owned by Plans")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ChangePlanFeatureLimitsAsync(ChangePlanFeatureLimitsCommand command)
         {
             var result = await _mediator.Send(command);
             if (!result.IsSuccess)

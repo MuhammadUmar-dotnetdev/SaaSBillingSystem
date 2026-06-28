@@ -14,7 +14,7 @@ using SaaSBillingSystem.Application.Features.Plans.UpdatePlan;
 
 namespace SaaSBillingSystem.API.Controllers
 {
-    [Authorize(Policy = "User")]
+    //[Authorize(Policy = "User")]
     [Produces("application/json")]
     [ApiController]
     [Route("api/[controller]")]

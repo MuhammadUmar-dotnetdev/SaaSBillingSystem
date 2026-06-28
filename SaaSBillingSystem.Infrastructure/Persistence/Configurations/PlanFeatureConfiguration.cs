@@ -23,6 +23,12 @@ namespace SaaSBillingSystem.Infrastructure.Persistence.Configurations
             builder.HasOne(pf => pf.Feature)
                 .WithMany(f => f.PlanFeatures)
                 .HasForeignKey(f => f.FeatureId);
+
+            builder.HasIndex(f => new
+            {
+                f.PlanId,
+                f.FeatureId
+            }).IsUnique();
         }
     }
 }
