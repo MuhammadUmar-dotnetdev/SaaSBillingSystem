@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SaaSBillingSystem.Application.Features.Plans.ActivatePlan;
 using SaaSBillingSystem.Application.Features.Plans.ChangeLimits;
@@ -11,6 +10,7 @@ using SaaSBillingSystem.Application.Features.Plans.MakePlanPrivate;
 using SaaSBillingSystem.Application.Features.Plans.MakePlanPublic;
 using SaaSBillingSystem.Application.Features.Plans.RenamePlan;
 using SaaSBillingSystem.Application.Features.Plans.UpdatePlan;
+using SaaSBillingSystem.Application.Features.Plans.UpdatePlanPricing;
 
 namespace SaaSBillingSystem.API.Controllers
 {
@@ -121,10 +121,10 @@ namespace SaaSBillingSystem.API.Controllers
         [EndpointDescription("This endpoint activates the plan")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpPatch("activate")]
-        public async Task<IActionResult> ActivatePlan(ActivatePlanCommand command)
+        [HttpPatch("activate/{id:guid}")]
+        public async Task<IActionResult> ActivatePlanAsync(Guid id)
         {
-            var result = await _mediator.Send(command);
+            var result = await _mediator.Send(new ActivatePlanCommand(id));
             if (!result.IsSuccess)
             {
                 return NotFound(result.Error);
@@ -136,10 +136,10 @@ namespace SaaSBillingSystem.API.Controllers
         [EndpointDescription("This endpoint deactivates the plan")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpPatch("deactivate")]
-        public async Task<IActionResult> DeactivatePlan(DeactivatePlanCommand command)
+        [HttpPatch("deactivate/{id:guid}")]
+        public async Task<IActionResult> DeactivatePlanAsync(Guid id)
         {
-            var result = await _mediator.Send(command);
+            var result = await _mediator.Send(new DeactivatePlanCommand(id));
             if (!result.IsSuccess)
             {
                 return NotFound(result.Error);
@@ -151,10 +151,10 @@ namespace SaaSBillingSystem.API.Controllers
         [EndpointDescription("This endpoint set plan as private")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpPatch("make-private")]
-        public async Task<IActionResult> MakePrivate(MakePlanPrivateCommand command)
+        [HttpPatch("make-private/{id:guid}")]
+        public async Task<IActionResult> MakePrivateAsync(Guid id)
         {
-            var result = await _mediator.Send(command);
+            var result = await _mediator.Send(new MakePlanPrivateCommand(id));
             if (!result.IsSuccess)
             {
                 return NotFound(result.Error);
@@ -166,8 +166,23 @@ namespace SaaSBillingSystem.API.Controllers
         [EndpointDescription("This endpoint set plan as public")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpPatch("make-public")]
-        public async Task<IActionResult> MakePublic(MakePlanPublicCommand command)
+        [HttpPatch("make-public/{id:guid}")]
+        public async Task<IActionResult> MakePublicAsync(Guid id)
+        {
+            var result = await _mediator.Send(new MakePlanPublicCommand(id));
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.Error);
+            }
+            return Ok(result);
+        }
+
+        [EndpointSummary("Update Plan Pricing")]
+        [EndpointDescription("This endpoint update pricing of plan")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpPatch("update-pricing")]
+        public async Task<IActionResult> UpdatePricingAsync(UpdatePlanPricingCommand command)
         {
             var result = await _mediator.Send(command);
             if (!result.IsSuccess)

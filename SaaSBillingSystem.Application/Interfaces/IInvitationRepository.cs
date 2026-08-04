@@ -17,6 +17,8 @@ namespace SaaSBillingSystem.Application.Interfaces
             Guid organizationId,
             string email);
 
+        Task<List<Invitation>> GetInvitationsByEmailAsync(string email);
+
         Task UpdateAsync(Invitation invitation);
 
         Task DeleteAsync(Invitation invitation);

@@ -23,6 +23,11 @@ namespace SaaSBillingSystem.API.Extensions
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();
             services.AddScoped<IPaymentRepository, PaymentRepository>();
             services.AddScoped<IPlanFeatureQueries, PlanFeatureQueries>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IInvitationEmailService, InvitationEmailService>();
+            services.AddScoped<IBackgroundJobService, HangfireBackgroundJobService>();
+            services.AddScoped<IInvitationCleanupService, InvitationCleanupService>();
+            services.AddScoped<IChatService, ChatService>();
             return services;
         }
     }

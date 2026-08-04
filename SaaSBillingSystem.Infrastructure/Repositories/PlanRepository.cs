@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SaaSBillingSystem.Application.Interfaces;
 using SaaSBillingSystem.Domain.Entities;
+using SaaSBillingSystem.Domain.Enums;
 using SaaSBillingSystem.Infrastructure.Persistence;
 
 namespace SaaSBillingSystem.Infrastructure.Repositories
@@ -20,9 +21,9 @@ namespace SaaSBillingSystem.Infrastructure.Repositories
             return plan.Id;
         }
 
-        public async Task<Plan?> GetPlanByIdAsync(Guid id)
+        public async Task<Plan?> GetPlanByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            return await _context.Plans.FirstOrDefaultAsync(p => p.Id == id);
+            return await _context.Plans.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
         }
 
         public async Task<List<Plan>> GetByIdsAsync(List<Guid> ids)
@@ -34,15 +35,20 @@ namespace SaaSBillingSystem.Infrastructure.Repositories
             return await _context.Plans.ToListAsync();
         }
 
-        public async Task UpdateAsync(Plan plan)
+        public async Task UpdateAsync(Plan plan, CancellationToken cancellationToken)
         {
             _context.Plans.Update(plan);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
         public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
         {
             return await _context.Plans.AnyAsync(p => p.Id == id, cancellationToken);
+        }
+
+        public async Task<bool> ExistsByNameAndBillingCycleAsync(string name, BillingCycle billingCycle, CancellationToken cancellationToken)
+        {
+            return await _context.Plans.AnyAsync(p => p.Name == name && p.BillingCycle == billingCycle);
         }
     }
 }

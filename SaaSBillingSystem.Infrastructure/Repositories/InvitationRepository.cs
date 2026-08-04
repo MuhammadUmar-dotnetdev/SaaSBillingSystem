@@ -51,5 +51,10 @@ namespace SaaSBillingSystem.Infrastructure.Repositories
             _context.Invitations.Remove(invitation);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<Invitation>> GetInvitationsByEmailAsync(string email)
+        {
+            return await _context.Invitations.Where(i => i.Email == email).ToListAsync();
+        }
     }
 }

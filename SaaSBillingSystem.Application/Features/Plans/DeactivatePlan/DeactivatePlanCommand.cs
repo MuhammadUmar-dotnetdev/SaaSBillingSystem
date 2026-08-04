@@ -5,6 +5,10 @@ namespace SaaSBillingSystem.Application.Features.Plans.DeactivatePlan
 {
     public class DeactivatePlanCommand: IRequest<Result>
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
+        public DeactivatePlanCommand(Guid id)
+        {
+            Id = id;
+        }
     }
 }

@@ -5,6 +5,10 @@ namespace SaaSBillingSystem.Application.Features.Plans.ActivatePlan
 {
     public class ActivatePlanCommand: IRequest<Result>
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
+        public ActivatePlanCommand(Guid id)
+        {
+            Id = id;
+        }
     }
 }

@@ -6,7 +6,7 @@ using SaaSBillingSystem.Application.Features.Invitations.AddInvitation;
 
 namespace SaaSBillingSystem.API.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class InvitationController: ControllerBase
@@ -33,9 +33,9 @@ namespace SaaSBillingSystem.API.Controllers
         }
 
         [HttpPost("accept")]
-        public async Task<IActionResult> AcceptAsync(AcceptInvitationCommand command)
+        public async Task<IActionResult> AcceptAsync([FromQuery] string token)
         {
-            var result = await _mediator.Send(command);
+            var result = await _mediator.Send(new AcceptInvitationCommand(token));
             if (!result.IsSuccess)
             {
                 return NotFound(result.Error);

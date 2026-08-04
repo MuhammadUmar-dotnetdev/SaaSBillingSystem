@@ -40,7 +40,7 @@ namespace SaaSBillingSystem.Application.Features.Invoices.GetInvoiceById
                 return Result<InvoiceResponse>.Failure($"Subscription with id {invoice.SubscriptionId} was not found");
             }
 
-            var plan = await _planRepository.GetPlanByIdAsync(subscription.PlanId);
+            var plan = await _planRepository.GetPlanByIdAsync(subscription.PlanId, cancellationToken);
 
             if (plan == null)
             {

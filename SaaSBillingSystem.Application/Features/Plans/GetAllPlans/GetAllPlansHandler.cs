@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Logging;
 using SaaSBillingSystem.Application.Interfaces;
 using SaaSBillingSystem.Shared.Common;
 
@@ -7,9 +8,11 @@ namespace SaaSBillingSystem.Application.Features.Plans.GetAllPlans
     public class GetAllPlansHandler: IRequestHandler<GetAllPlansCommand, Result<List<GetAllPlansResponse>>>
     {
         private readonly IPlanRepository _planRepository;
-        public GetAllPlansHandler(IPlanRepository planRepository)
+        private readonly ILogger<GetAllPlansHandler> _logger;
+        public GetAllPlansHandler(IPlanRepository planRepository, ILogger<GetAllPlansHandler> logger)
         {
             _planRepository = planRepository;
+            _logger = logger;
         }
 
         public async Task<Result<List<GetAllPlansResponse>>> Handle(GetAllPlansCommand command, CancellationToken cancellationToken)
@@ -17,6 +20,7 @@ namespace SaaSBillingSystem.Application.Features.Plans.GetAllPlans
             var plans = await _planRepository.GetAllPlansAsync();
             if(!plans.Any())
             {
+                _logger.LogWarning("Plan list is empty");
                 return Result<List<GetAllPlansResponse>>.Failure("Plan list is empty");
             }
 

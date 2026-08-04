@@ -7,12 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="14.1.0" />
+    <PackageReference Include="MediatR" Version="14.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SaaSBillingSystem.Domain\SaaSBillingSystem.Domain.csproj" />
     <ProjectReference Include="..\SaaSBillingSystem.Shared\SaaSBillingSystem.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Requirements\AuthorizationRequirements\" />
+    <Folder Include="Requirements\AuthorizationHandlers\" />
   </ItemGroup>
 
 </Project>

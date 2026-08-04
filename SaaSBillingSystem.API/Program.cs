@@ -4,6 +4,13 @@ using SaaSBillingSystem.API.Extensions;
 using SaaSBillingSystem.API.Middlewares;
 using StackExchange.Redis;
 using Scalar.AspNetCore;
+using SaaSBillingSystem.Shared.Common.ConfigurationOptions;
+using Hangfire;
+using Hangfire.PostgreSql;
+using OllamaSharp;
+using Hangfire.PostgreSql.Properties;
+using Microsoft.Extensions.AI;
+using SaaSBillingSystem.Shared.Common;
 
 namespace SaaSBillingSystem.API
 {
@@ -56,6 +63,34 @@ namespace SaaSBillingSystem.API
                 {
                     policy.RequireRole("Owner");
                 });
+
+                //options.AddPolicy("d")
+            });
+
+            builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Email"));
+            builder.Services.Configure<FrontendOptions>(builder.Configuration.GetSection("Frontend"));
+
+            builder.Services.AddHangfire(config =>
+            {
+                config.UsePostgreSqlStorage(options =>
+                {
+                    options.UseNpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
+                });
+            });
+
+            builder.Services.AddHangfireServer();
+
+            builder.Services.AddChatClient(sp =>
+            {
+                IChatClient innerClient = new OllamaApiClient(
+                    uri: new Uri("http://localhost:11434"),
+                    defaultModel: "llama3.2"
+                //defaultModel: "phi3:mini"
+                );
+
+                return new ChatClientBuilder(innerClient)
+                .UseFunctionInvocation()
+                .Build();
             });
 
             var app = builder.Build();
@@ -70,6 +105,7 @@ namespace SaaSBillingSystem.API
                     .WithTheme(ScalarTheme.Purple)
                     .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
                 });
+                app.UseHangfireDashboard();
             }
 
             app.UseMiddleware<GlobalExceptionMiddleware>();
@@ -86,6 +122,26 @@ namespace SaaSBillingSystem.API
             app.MapGet("/", () =>
             {
                 return Results.Ok("Welcome To SaaS App");
+            });
+
+            app.MapPost("/api/chat", async (PromptRequest request, IChatClient client, IChatService chatService) =>
+            {
+                if(string.IsNullOrEmpty(request.Prompt))
+                {
+                    return Results.BadRequest("Prompt can't be empty");
+                }
+
+                var options = new ChatOptions
+                {
+                    Tools = new AIFunction[]
+                    {
+                        AIFunctionFactory.Create(chatService.CalculateTotalTax),
+                        AIFunctionFactory.Create(chatService.CheckInvitationsList)
+                    }
+                };
+
+                var response = await client.GetResponseAsync(request.Prompt, options);
+                return Results.Ok(new { answer = response.Text });
             });
 
             app.Run();

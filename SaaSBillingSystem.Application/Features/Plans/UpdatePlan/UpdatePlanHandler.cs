@@ -14,7 +14,7 @@ namespace SaaSBillingSystem.Application.Features.Plans.UpdatePlan
 
         public async Task<Result<UpdatePlanResponse>> Handle(UpdatePlanCommand command, CancellationToken cancellationToken)
         {
-            var plan = await _planRepository.GetPlanByIdAsync(command.Id);
+            var plan = await _planRepository.GetPlanByIdAsync(command.Id, cancellationToken);
             if(plan == null)
             {
                 return Result<UpdatePlanResponse>.Failure($"Plan with id {command.Id} was not found");
@@ -22,7 +22,7 @@ namespace SaaSBillingSystem.Application.Features.Plans.UpdatePlan
 
             plan.Update(command.Name, command.Description, command.Price, command.BillingCycle, command.MaxUsers, command.MaxProjects, command.MaxStorageInMb, command.IsPublic);
 
-            await _planRepository.UpdateAsync(plan);
+            await _planRepository.UpdateAsync(plan, cancellationToken);
             var response = new UpdatePlanResponse
             {
                 Id = plan.Id,

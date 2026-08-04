@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using SaaSBillingSystem.Application.Interfaces;
-using SaaSBillingSystem.Domain.Entities;
 using SaaSBillingSystem.Shared.Common;
 
 namespace SaaSBillingSystem.Application.Features.Plans.GetPlanById
@@ -15,10 +14,10 @@ namespace SaaSBillingSystem.Application.Features.Plans.GetPlanById
 
         public async Task<Result<GetPlanByIdResponse>> Handle(GetPlanByIdCommand command, CancellationToken cancellationToken)
         {
-            var plan = await _planRepository.GetPlanByIdAsync(command.Id);
+            var plan = await _planRepository.GetPlanByIdAsync(command.Id, cancellationToken);
             if(plan == null)
             {
-                return Result<GetPlanByIdResponse>.Failure($"Plan with {command.Id} not found");
+                return Result<GetPlanByIdResponse>.Failure($"Plan with given id not found");
             }
 
             var response = new GetPlanByIdResponse

@@ -12,12 +12,14 @@ namespace SaaSBillingSystem.Application.Features.Invitations.AcceptInvitation
         private readonly IUserRepository _userRepository;
         private readonly IOrganizationMembershipRepository _organizationMembershipRepository;
         private readonly IOrganizationRepository _organizationRepository;
-        public AcceptInvitationHandler(IInvitationRepository invitationRepository, IUserRepository userRepository, IOrganizationMembershipRepository organizationMembershipRepository, IOrganizationRepository organizationRepository)
+        private readonly IBackgroundJobService _backgroundJobService;
+        public AcceptInvitationHandler(IInvitationRepository invitationRepository, IUserRepository userRepository, IOrganizationMembershipRepository organizationMembershipRepository, IOrganizationRepository organizationRepository, IBackgroundJobService backgroundJobService)
         {
             _invitationRepository = invitationRepository;
             _userRepository = userRepository;
             _organizationMembershipRepository = organizationMembershipRepository;
             _organizationRepository = organizationRepository;
+            _backgroundJobService = backgroundJobService;
         }
 
         public async Task<Result<AcceptInvitationResponse>> Handle(AcceptInvitationCommand command, CancellationToken cancellationToken)
@@ -65,6 +67,7 @@ namespace SaaSBillingSystem.Application.Features.Invitations.AcceptInvitation
             invitation.Accept();
             await _invitationRepository.UpdateAsync(invitation);
 
+            _backgroundJobService.Enqueue<IInvitationCleanupService>(x => x.DeletePendingInvitationsAsync(invitation.OrganizationId, invitation.Email, cancellationToken));
 
             var response = new AcceptInvitationResponse()
             {

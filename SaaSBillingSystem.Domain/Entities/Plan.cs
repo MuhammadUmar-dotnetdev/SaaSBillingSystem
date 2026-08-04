@@ -1,4 +1,5 @@
 ﻿using SaaSBillingSystem.Domain.Enums;
+using SaaSBillingSystem.Shared.Common;
 
 namespace SaaSBillingSystem.Domain.Entities;
 
@@ -90,56 +91,102 @@ public class Plan
         IsPublic = isPublic;
     }
 
-    public void UpdatePricing(decimal newPrice)
+    public Result UpdatePricing(decimal newPrice)
     {
         if (newPrice < 0)
-            throw new ArgumentException("Price cannot be negative.");
+        {
+            return Result.Failure("Price cannot be negative.");
+        }
 
         Price = newPrice;
         UpdatedAtUtc = DateTime.UtcNow;
+        return Result.Success();
     }
 
-    public void ChangeLimits(
-        int maxUsers,
-        int maxProjects,
-        long maxStorageInMb)
+    public Result ChangeLimits(int maxUsers, int maxProjects, long maxStorageInMb)
     {
+        if (MaxUsers == maxUsers)
+        {
+            return Result.Failure("This Plan's maxUsers is already set to given value");
+        }
         MaxUsers = maxUsers;
+
+        if (MaxProjects == maxProjects)
+        {
+            return Result.Failure("This Plan's maxProjects is already set to given value");
+        }
         MaxProjects = maxProjects;
+
+        if (MaxStorageInMb == maxStorageInMb)
+        {
+            return Result.Failure("This Plan's maxStorageInMb is already set to given value");
+        }
         MaxStorageInMb = maxStorageInMb;
 
         UpdatedAtUtc = DateTime.UtcNow;
+        return Result.Success();
     }
 
-    public void Rename(string name, string description)
+    public Result Rename(string name, string description)
     {
+        if (Name == name)
+        {
+            return Result.Failure("This Plan's name is already set to given name");
+        }
         Name = name;
+
+        if (Description == description)
+        {
+            return Result.Failure("This Plan's description is already set to given value");
+        }
+
         Description = description;
 
         UpdatedAtUtc = DateTime.UtcNow;
+        return Result.Success();
     }
 
-    public void Activate()
+    public Result Activate()
     {
+        if (IsActive == true)
+        {
+            return Result.Failure("This plan is already activated");
+        }
         IsActive = true;
         UpdatedAtUtc = DateTime.UtcNow;
+        return Result.Success();
     }
 
-    public void Deactivate()
+    public Result Deactivate()
     {
+        if (IsActive == false)
+        {
+            return Result.Failure("This plan is already deactivated");
+        }
         IsActive = false;
         UpdatedAtUtc = DateTime.UtcNow;
+        return Result.Success();
     }
 
-    public void MakePrivate()
+    public Result MakePrivate()
     {
+        if (IsPublic == false)
+        {
+            return Result.Failure("This plan is already set to private");
+        }
         IsPublic = false;
         UpdatedAtUtc = DateTime.UtcNow;
+        return Result.Success();
     }
 
-    public void MakePublic()
+    public Result MakePublic()
     {
+        if (IsPublic == true)
+        {
+            return Result.Failure("This plan is already set to public");
+        }
         IsPublic = true;
         UpdatedAtUtc = DateTime.UtcNow;
+        return Result.Success();
     }
 }

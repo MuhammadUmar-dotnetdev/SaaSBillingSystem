@@ -5,6 +5,11 @@ namespace SaaSBillingSystem.Application.Features.Plans.MakePlanPublic
 {
     public class MakePlanPublicCommand: IRequest<Result>
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
+
+        public MakePlanPublicCommand(Guid id)
+        {
+            Id = id;
+        }
     }
 }
